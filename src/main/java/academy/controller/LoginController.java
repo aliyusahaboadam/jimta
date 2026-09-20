@@ -62,6 +62,9 @@ public class LoginController {
             case "PLAYER" -> PLAYER_HOME_URL;
             default       -> ERROR;
         };
+        
+        System.out.println("JWT" + jwt);
+        System.out.println("URL" + redirectUrl);
 
         LoginResponse response = new LoginResponse(jwt, redirectUrl);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);

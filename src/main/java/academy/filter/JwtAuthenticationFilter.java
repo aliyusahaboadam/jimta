@@ -39,12 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Define public endpoints that don't require authentication
     // Kept in sync with SecurityConfig's permitAll() list
     private final List<String> publicEndpoints = Arrays.asList(
-        "/health",
-        "/actuator/**",    // All actuator endpoints
-        "/v1/api/login",
-        "/v1/api/admin/add",
-        "/v1/api/admin/exists-by-email/**"
-    );
+    	    "/health",
+    	    "/actuator/**",
+    	    "/v1/api/login",
+    	    "/v1/api/admin/add",
+    	    "/v1/api/admin/exists-by-email/**",
+    	    "/v1/api/password/**"    // ADD THIS — password reset is used by logged-out users
+    	);
     
     public JwtAuthenticationFilter(HandlerExceptionResolver handlerExceptionResolver, 
                                  JwtUtil jwtUtil,
@@ -60,99 +61,65 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                   HttpServletResponse response, 
                                   FilterChain filterChain) throws ServletException, IOException {
         
-        String requestPath = request.getRequestURI();
-        String method = request.getMethod();
-        
-   
-        
-        // Add logging to debug
-        System.out.println("JWT Filter - Processing: " + method + " " + requestPath);
-        
-        // Skip JWT processing for public endpoints
-        if (isPublicEndpoint(requestPath)) {
-            System.out.println("JWT Filter - Skipping authentication for public endpoint: " + requestPath);
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
-        
-        // Extract token from Authorization header
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-        }
-        
-        // Only proceed if we have a token
-        if (token != null) {
-            try {
-                username = jwtUtil.extractUsername(token);
-                
-                // Check if user is not already authenticated
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                
-                if (username != null && authentication == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    
-                    // Validate token
-                    if (jwtUtil.isTokenValid(token, userDetails)) {
-                        
-                        UsernamePasswordAuthenticationToken authToken = 
-                            new UsernamePasswordAuthenticationToken(
-                                userDetails, 
-                                null, 
-                                userDetails.getAuthorities()
-                            );
-                        
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    }
-                }
-                
-            } catch (ExpiredJwtException expiredEx) {
-                System.out.println("JWT Token has expired: " + expiredEx.getMessage());
-                SecurityContextHolder.clearContext();
-                handleJwtException(response, "JWT_EXPIRED", "JWT token has expired. Please login again.");
-                return;
-                
-            } catch (MalformedJwtException malformedEx) {
-                System.out.println("JWT Token is malformed: " + malformedEx.getMessage());
-                SecurityContextHolder.clearContext();
-                handleJwtException(response, "JWT_MALFORMED", "Invalid JWT token format.");
-                return;
-                
-            } catch (SignatureException signatureEx) {
-                System.out.println("JWT Token signature is invalid: " + signatureEx.getMessage());
-                SecurityContextHolder.clearContext();
-                handleJwtException(response, "JWT_SIGNATURE_INVALID", "JWT token signature is invalid.");
-                return;
-                
-            } catch (JwtException jwtEx) {
-                System.out.println("JWT Token error: " + jwtEx.getMessage());
-                SecurityContextHolder.clearContext();
-                handleJwtException(response, "JWT_ERROR", "JWT token is invalid.");
-                return;
-                
-            } catch (Exception exception) {
-                // Log the exception for debugging
-                System.out.println("JWT Filter Exception: " + exception.getMessage());
-                exception.printStackTrace();
-                
-                // Clear security context on error
-                SecurityContextHolder.clearContext();
-                handleJwtException(response, "AUTHENTICATION_ERROR", "Authentication failed.");
-                return;
-            }  
-        } else {
-            // No token provided for protected endpoint
-            System.out.println("No JWT token provided for protected endpoint: " + requestPath);
-            handleJwtException(response, "NO_TOKEN", "JWT token is required for this endpoint.");
-            return;
-        }
-        
-        // Continue the filter chain only if no JWT errors occurred
-        filterChain.doFilter(request, response);
+    	String authorizationHeader = request.getHeader("Authorization");
+    	String token = null;
+
+    	// Extract token from Authorization header
+    	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+    	    token = authorizationHeader.substring(7);
+    	    // Guard against the strings "null" and "undefined" that the frontend
+    	    // can accidentally send when localStorage is empty
+    	    if (token.isBlank() || token.equals("null") || token.equals("undefined")) {
+    	        token = null;
+    	    }
+    	}
+
+    	// If no token present, let the request continue.
+    	// Spring Security's authorizeHttpRequests rules will then decide whether
+    	// this endpoint requires authentication and return a proper 401/403 if so.
+    	if (token == null) {
+    	    filterChain.doFilter(request, response);
+    	    return;
+    	}
+
+    	// Token present — validate it
+    	try {
+    	    String username = jwtUtil.extractUsername(token);
+    	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    	    if (username != null && authentication == null) {
+    	        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    	        if (jwtUtil.isTokenValid(token, userDetails)) {
+    	            UsernamePasswordAuthenticationToken authToken =
+    	                new UsernamePasswordAuthenticationToken(
+    	                    userDetails, null, userDetails.getAuthorities());
+    	            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    	            SecurityContextHolder.getContext().setAuthentication(authToken);
+    	        }
+    	    }
+    	} catch (ExpiredJwtException expiredEx) {
+    	    SecurityContextHolder.clearContext();
+    	    handleJwtException(response, "JWT_EXPIRED", "JWT token has expired. Please login again.");
+    	    return;
+    	} catch (MalformedJwtException malformedEx) {
+    	    SecurityContextHolder.clearContext();
+    	    handleJwtException(response, "JWT_MALFORMED", "Invalid JWT token format.");
+    	    return;
+    	} catch (SignatureException signatureEx) {
+    	    SecurityContextHolder.clearContext();
+    	    handleJwtException(response, "JWT_SIGNATURE_INVALID", "JWT token signature is invalid.");
+    	    return;
+    	} catch (JwtException jwtEx) {
+    	    SecurityContextHolder.clearContext();
+    	    handleJwtException(response, "JWT_ERROR", "JWT token is invalid.");
+    	    return;
+    	} catch (Exception exception) {
+    	    SecurityContextHolder.clearContext();
+    	    handleJwtException(response, "AUTHENTICATION_ERROR", "Authentication failed.");
+    	    return;
+    	}
+
+    	filterChain.doFilter(request, response);
     }
     
     /**

@@ -69,6 +69,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Collection<? extends GrantedAuthority> getAuthorities(String role) {
         // Prefix with ROLE_ so hasRole("PLAYER") works in Spring Security
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 }
