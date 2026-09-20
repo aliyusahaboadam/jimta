@@ -8,11 +8,11 @@
 		<version>3.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.miqwii</groupId>
-	<artifactId>miqwii_manager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>miqwii_manager</name>
-	<description>School Result Management Application</description>
+	<groupId>com.jimta</groupId>
+<artifactId>jimta</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<name>jimta</name>
+<description>Jimta Football Academy Management Application</description>
 	<url/>
 	<licenses>
 		<license/>
