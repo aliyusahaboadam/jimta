@@ -14,6 +14,8 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
 
     List<Training> findAllByTeam_Id(Long teamId);
 
+    void deleteAllByTeam_Id(Long teamId);
+    
     @Query("SELECT new academy.dto.response.TrainingResponseDto("
             + "t.id, t.title, t.description, t.trainingDate, t.startTime, t.endTime, t.venue, "
             + "t.team.id, t.team.name, "

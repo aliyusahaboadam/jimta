@@ -26,6 +26,19 @@ public class PlayerResponseDto {
     private Long teamId;
     private Long userId;
     private Set<Long> performanceIds = new HashSet<>();
+    
+    
+ 
+    private String teamName;
+
+    // add a constructor overload or extra args
+    public PlayerResponseDto(long id, String firstname, String surname, String lastname,
+                             String position, Integer jerseyNumber,
+                             Long teamId, String teamName) {
+        // ...
+        this.teamId = teamId;
+        this.teamName = teamName;
+    }
 
     public PlayerResponseDto() {}
     
@@ -38,6 +51,97 @@ this.lastname = lastname;
 this.position = position;
 this.jerseyNumber = jerseyNumber;
 }
+    
+    
+    public PlayerResponseDto(long id, String firstname, String surname, String lastname,
+            String position, Integer jerseyNumber,
+            String nationality, String preferredFoot,
+            Double heightCm, Double weightKg,
+            Integer playerNumber, String previousClub,
+            Long teamId, String teamName) {
+this.id = id;
+this.firstname = firstname;
+this.surname = surname;
+this.lastname = lastname;
+this.position = position;
+this.jerseyNumber = jerseyNumber;
+this.nationality = nationality;
+this.preferredFoot = preferredFoot;
+this.heightCm = heightCm;
+this.weightKg = weightKg;
+this.playerNumber = playerNumber;
+this.previousClub = previousClub;
+this.teamId = teamId;
+this.teamName = teamName;
+}
+    
+    
+    public PlayerResponseDto(long id, String firstname, String surname, String lastname,
+            String position, Integer jerseyNumber,
+            String nationality, String preferredFoot,
+            Double heightCm, Double weightKg,
+            Integer playerNumber, String previousClub,
+            String photoUrl,
+            Long teamId, String teamName) {
+this.id = id;
+this.firstname = firstname;
+this.surname = surname;
+this.lastname = lastname;
+this.position = position;
+this.jerseyNumber = jerseyNumber;
+this.nationality = nationality;
+this.preferredFoot = preferredFoot;
+this.heightCm = heightCm;
+this.weightKg = weightKg;
+this.playerNumber = playerNumber;
+this.previousClub = previousClub;
+this.photoUrl = photoUrl;
+this.teamId = teamId;
+this.teamName = teamName;
+}
+    
+    public PlayerResponseDto(long id, String firstname, String surname, String lastname,
+            String position, Integer jerseyNumber,
+            String nationality, String preferredFoot,
+            Double heightCm, Double weightKg,
+            Integer playerNumber, String previousClub) {
+this.id = id;
+this.firstname = firstname;
+this.surname = surname;
+this.lastname = lastname;
+this.position = position;
+this.jerseyNumber = jerseyNumber;
+this.nationality = nationality;
+this.preferredFoot = preferredFoot;
+this.heightCm = heightCm;
+this.weightKg = weightKg;
+this.playerNumber = playerNumber;
+this.previousClub = previousClub;
+}
+    
+    public PlayerResponseDto(long id, String firstname, String surname, String lastname,
+            String position, Integer jerseyNumber,
+            String nationality, String preferredFoot,
+            Double heightCm, Double weightKg,
+            Integer playerNumber, String previousClub,
+            String photoUrl) {
+    	this.id = id;
+    	this.firstname = firstname;
+    	this.surname = surname;
+    	this.lastname = lastname;
+    	this.position = position;
+    	this.jerseyNumber = jerseyNumber;
+    	this.nationality = nationality;
+    	this.preferredFoot = preferredFoot;
+    	this.heightCm = heightCm;
+    	this.weightKg = weightKg;
+    	this.playerNumber = playerNumber;
+    	this.previousClub = previousClub;
+this.photoUrl = photoUrl;
+}
+    
+    
+    
     
     
     public PlayerResponseDto(long id, String firstname, String surname, String lastname,
@@ -118,6 +222,16 @@ this.weightKg = weightKg;
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
+
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+	
+	
     
     
 }

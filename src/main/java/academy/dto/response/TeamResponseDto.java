@@ -19,6 +19,16 @@ public class TeamResponseDto {
  // Add fields:
   
     private String coachName;
+    
+    public TeamResponseDto(long id, String name, String ageGroup, String division,
+            Long coachId, String coachName) {
+this.id = id;
+this.name = name;
+this.ageGroup = ageGroup;
+this.division = division;
+this.coachId = coachId;
+this.coachName = coachName;
+}
 
     // Extend this constructor (list with player count):
     public TeamResponseDto(long id, String name, String ageGroup, String division,

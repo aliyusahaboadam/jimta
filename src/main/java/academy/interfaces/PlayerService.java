@@ -28,5 +28,7 @@ public interface PlayerService {
 	void deletePlayer(Long id);
 	
 	Player savePlayer(PlayerRequestDto dto);
+	
+	List<PlayerResponseDto> findAllPlayerDto();
 
 }

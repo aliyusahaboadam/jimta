@@ -112,8 +112,14 @@ public class CoachServiceImpl implements CoachService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteCoach(Long id) {
-		coachRepository.deleteById(id);
+	    Coach coach = coachRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Coach not found"));
+
+	    coach.removeAllTeams();  // nulls Team.coach FK for each
+
+	    coachRepository.delete(coach);  // cascades to user/profile
 	}
 	
 	@Override

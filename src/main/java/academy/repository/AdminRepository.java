@@ -21,12 +21,14 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 	List<Admin> findAll();
 
 	@Query("SELECT new academy.dto.response.AdminResponseDto(a.id, a.firstname, a.surname, a.lastname, a.email, a.phoneNumber) "
-			+ "FROM Admin a WHERE a.id = :id")
+	        + "FROM Admin a WHERE a.id = :id")
 	Optional<AdminResponseDto> findAdminDtoById(@Param("id") Long id);
 
-	@Query("SELECT academy.dto.response.AdminResponseDto(a.id, a.firstname, a.surname, a.lastname, a.email, a.phoneNumber) "
-			+ "FROM Admin a")
+	@Query("SELECT new academy.dto.response.AdminResponseDto(a.id, a.firstname, a.surname, a.lastname, a.email, a.phoneNumber) "
+	        + "FROM Admin a")
 	List<AdminResponseDto> findAllAdminDto();
+	
+	
 
 
 }

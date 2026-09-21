@@ -23,9 +23,10 @@ public class AdminSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.findByRole("ADMIN") != null) {
-            return;
-        }
+    	
+    	if (userRepository.existsByRole("ADMIN")) {
+    	    return;
+    	}
 
         // 1. Admin (domain entity) first — Profile and User reference it by FK
         Admin admin = new Admin();

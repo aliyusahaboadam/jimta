@@ -11,5 +11,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findAllByOrderByActivityDateDescIdDesc();
 
     List<Activity> findAllByTeam_IdOrderByActivityDateDescIdDesc(Long teamId);
+    void deleteAllByTeam_Id(Long teamId);
 
 }

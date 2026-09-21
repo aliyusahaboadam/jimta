@@ -12,6 +12,10 @@ public class AdminRequestDto {
     private String phoneNumber;
     private Long userId;
     private Profile profile;
+    
+    private String password;
+
+  
 
     private AdminRequestDto(Builder builder) {
         this.id = builder.id;
@@ -72,6 +76,14 @@ public class AdminRequestDto {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
     
     

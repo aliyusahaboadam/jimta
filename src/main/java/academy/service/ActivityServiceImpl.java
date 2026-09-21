@@ -125,7 +125,7 @@ public class ActivityServiceImpl implements ActivityService {
     public List<ActivityResponseDto> findAllImageOnlyActivities() {
         return activityRepository.findAllByOrderByActivityDateDescIdDesc()
                 .stream()
-                .filter(a -> !hasAnyVideo(a))
+                .filter(this::hasAnyPhoto)              // NEW
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
@@ -143,7 +143,7 @@ public class ActivityServiceImpl implements ActivityService {
     public List<ActivityResponseDto> findAllImageOnlyActivitiesByTeamId(Long teamId) {
         return activityRepository.findAllByTeam_IdOrderByActivityDateDescIdDesc(teamId)
                 .stream()
-                .filter(a -> !hasAnyVideo(a))
+                .filter(this::hasAnyPhoto)              // NEW — includes photos+social
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
@@ -181,6 +181,10 @@ public class ActivityServiceImpl implements ActivityService {
                 a.getTeam() != null ? a.getTeam().getId() : null,
                 a.getTeam() != null ? a.getTeam().getName() : null
         );
+    }
+    
+    private boolean hasAnyPhoto(Activity a) {
+        return a.getPhotoUrls() != null && !a.getPhotoUrls().isEmpty();
     }
 
 }

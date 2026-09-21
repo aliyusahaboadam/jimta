@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +31,8 @@ public class Team {
 	private String name;
 	private String ageGroup;
 	private String division;
+	
+	
 
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "coach_id")
@@ -121,6 +124,7 @@ public class Team {
 		this.players = builder.players;
 		this.homeMatches = builder.homeMatches;
 		this.awayMatches = builder.awayMatches;
+		
 	}
 
 	public Team() {
@@ -136,11 +140,15 @@ public class Team {
 		private Set<Player> players = new HashSet<>();
 		private Set<Match> homeMatches = new HashSet<>();
 		private Set<Match> awayMatches = new HashSet<>();
+		private boolean archived;
 
 		public Builder setId(long id) {
 			this.id = id;
 			return this;
 		}
+		
+		
+		public Builder setArchived(boolean archived) { this.archived = archived; return this; }
 
 		public Builder setName(String name) {
 			this.name = name;
@@ -250,5 +258,9 @@ public class Team {
 	public void setAwayMatches(Set<Match> awayMatches) {
 		this.awayMatches = awayMatches;
 	}
+
+
+	
+	
 
 }

@@ -20,8 +20,13 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 	@EntityGraph(attributePaths = {}) // don't pull in players/matches for a plain list
 	List<Team> findAll();
 
-	@Query("SELECT new academy.dto.response.TeamResponseDto(t.id, t.name, t.ageGroup, t.division) "
-			+ "FROM Team t WHERE t.id = :id")
+	@Query("SELECT new academy.dto.response.TeamResponseDto("
+	        + "t.id, t.name, t.ageGroup, t.division, "
+	        + "c.id, CONCAT(pr.firstname, ' ', pr.surname)) "
+	        + "FROM Team t "
+	        + "LEFT JOIN t.coach c "
+	        + "LEFT JOIN Profile pr ON pr.coach.id = c.id "
+	        + "WHERE t.id = :id")
 	Optional<TeamResponseDto> findTeamDtoById(@Param("id") Long id);
 
 	@Query("SELECT new academy.dto.response.TeamResponseDto(t.id, t.name, t.ageGroup, t.division) "
@@ -32,9 +37,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 			+ "FROM Team t WHERE t.coach.id = :coachId")
 	List<TeamResponseDto> findAllTeamDtoByCoachId(@Param("coachId") Long coachId);
 
-
-	
-	
 	@Query("SELECT new academy.dto.response.TeamResponseDto("
 	        + "t.id, t.name, t.ageGroup, t.division, SIZE(t.players), "
 	        + "c.id, CONCAT(pr.firstname, ' ', pr.surname)) "
@@ -42,5 +44,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 	        + "LEFT JOIN t.coach c "
 	        + "LEFT JOIN Profile pr ON pr.coach.id = c.id")
 	List<TeamResponseDto> findAllTeamDtoWithPlayerCount();
+	
+	
 
 }

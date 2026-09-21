@@ -70,7 +70,7 @@ public class Match {
 	//............................HOME TEAM REMOVAL PROCESS..................
 
 	// Internal method to avoid recursion
-	void setHomeTeamInternal(Team homeTeam) {
+	public void setHomeTeamInternal(Team homeTeam) {
 		this.homeTeam = homeTeam;
 	}
 
@@ -78,7 +78,7 @@ public class Match {
 	//............................AWAY TEAM REMOVAL PROCESS..................
 
 	// Internal method to avoid recursion
-	void setAwayTeamInternal(Team awayTeam) {
+	public void setAwayTeamInternal(Team awayTeam) {
 		this.awayTeam = awayTeam;
 	}
 

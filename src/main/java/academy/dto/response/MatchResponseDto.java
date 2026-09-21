@@ -59,4 +59,10 @@ public class MatchResponseDto {
 
     public Set<Long> getPerformanceIds() { return performanceIds; }
     public void setPerformanceIds(Set<Long> performanceIds) { this.performanceIds = performanceIds; }
+    
+    public String getHomeTeamName() { return homeTeamName; }
+    public void setHomeTeamName(String homeTeamName) { this.homeTeamName = homeTeamName; }
+
+    public String getAwayTeamName() { return awayTeamName; }
+    public void setAwayTeamName(String awayTeamName) { this.awayTeamName = awayTeamName; }
 }

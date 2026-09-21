@@ -102,6 +102,11 @@ public class MatchServiceImpl implements MatchService {
 	    match.setAwayScore(dto.getAwayScore());
 	    return matchRepository.save(match);
 	}
+	
+	@Override
+	public List<MatchResponseDto> findAllMatchDto() {
+	    return matchRepository.findAllMatchDto();
+	}
 
 	
 }

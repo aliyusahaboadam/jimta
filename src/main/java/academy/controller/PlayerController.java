@@ -78,8 +78,8 @@ public class PlayerController {
 
 
 	@GetMapping("/get-all")
-	public List<Player> getAllPlayers() {
-		return playerService.getAllPlayers();
+	public List<PlayerResponseDto> getAllPlayers() {
+	    return playerService.findAllPlayerDto();
 	}
 
 

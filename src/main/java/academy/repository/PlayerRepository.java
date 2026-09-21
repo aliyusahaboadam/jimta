@@ -20,10 +20,16 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 	@EntityGraph(attributePaths = {}) // don't pull in performances/user for a plain list
 	List<Player> findAll();
 
-	@Query("SELECT new academy.dto.response.PlayerResponseDto(p.id, pr.firstname, pr.surname, pr.lastname, "
-			+ "p.position, p.jerseyNumber) "
-			+ "FROM Player p LEFT JOIN Profile pr ON pr.player.id = p.id "
-			+ "WHERE p.id = :id")
+	@Query("SELECT new academy.dto.response.PlayerResponseDto("
+	        + "p.id, pr.firstname, pr.surname, pr.lastname, "
+	        + "p.position, p.jerseyNumber, "
+	        + "p.nationality, p.preferredFoot, p.heightCm, p.weightKg, "
+	        + "p.playerNumber, p.previousClub, "
+	        + "t.id, t.name) "
+	        + "FROM Player p "
+	        + "LEFT JOIN Profile pr ON pr.player.id = p.id "
+	        + "LEFT JOIN Team t ON t.id = p.team.id "
+	        + "WHERE p.id = :id")
 	Optional<PlayerResponseDto> findPlayerDtoById(@Param("id") Long id);
 
 	@Query("SELECT new academy.dto.response.PlayerResponseDto(p.id, pr.firstname, pr.surname, pr.lastname, "
@@ -37,5 +43,16 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 			+ "FROM Player p LEFT JOIN Profile pr ON pr.player.id = p.id "
 			+ "WHERE p.id = :id")
 	Optional<PlayerResponseDto> findPlayerProfileDtoById(@Param("id") Long id);
+	
+	@Query("SELECT new academy.dto.response.PlayerResponseDto("
+	        + "p.id, pr.firstname, pr.surname, pr.lastname, "
+	        + "p.position, p.jerseyNumber, "
+	        + "p.nationality, p.preferredFoot, p.heightCm, p.weightKg, "
+	        + "p.playerNumber, p.previousClub, "
+	        + "p.photoUrl, t.id, t.name) "
+	        + "FROM Player p "
+	        + "LEFT JOIN Profile pr ON pr.player.id = p.id "
+	        + "LEFT JOIN Team t ON t.id = p.team.id")
+	List<PlayerResponseDto> findAllPlayerDto();
 
 }

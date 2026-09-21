@@ -46,8 +46,8 @@ public class MatchController {
 
 
 	@GetMapping("/get-all")
-	public List<Match> getAllMatches() {
-		return matchService.getAllMatches();
+	public List<MatchResponseDto> getAllMatches() {
+	    return matchService.findAllMatchDto();
 	}
 
 

@@ -28,5 +28,7 @@ public interface MatchService {
 	void deleteMatch(Long id);
 	
 	Match updateMatch(Long id, MatchRequestDto dto);
+	
+	List<MatchResponseDto> findAllMatchDto();
 
 }

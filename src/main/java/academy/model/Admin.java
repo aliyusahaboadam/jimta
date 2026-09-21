@@ -33,19 +33,22 @@ public class Admin {
 	private String phoneNumber;
 
 
-	@OneToOne(mappedBy = "admin", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "admin",
+	          fetch = FetchType.EAGER,
+	          cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+	          orphanRemoval = true)
 	private User user;
 
-	// FIXED: was @ManyToOne on the Profile side only. Profile is now @OneToOne;
-	// this is the inverse side so admin.getProfile() works and each admin can
-	// only ever have one Profile row attached.
-	@OneToOne(mappedBy = "admin", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "admin",
+	          fetch = FetchType.EAGER,
+	          cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+	          orphanRemoval = true)
 	private Profile profile;
 
-
 	@OneToMany(mappedBy = "admin",
-	        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
-	        fetch = FetchType.LAZY)
+	           cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+	           orphanRemoval = true,
+	           fetch = FetchType.LAZY)
 	private Set<ForgotPasswordToken> forgotPasswordTokens = new HashSet<>();
 
 

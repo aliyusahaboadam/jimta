@@ -149,8 +149,24 @@ public class PlayerServiceImpl implements PlayerService {
 	}
 
 	@Override
+	@Transactional
 	public void deletePlayer(Long id) {
-		playerRepository.deleteById(id);
+	    Player player = playerRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Player not found"));
+
+	    // Detach from team so we don't drag the team/coach into the delete
+	    if (player.getTeam() != null) {
+	        Team team = player.getTeam();
+	        team.removePlayer(player);
+	    }
+
+	    // Cascades on user, profile, performances will handle the rest
+	    playerRepository.delete(player);
+	}
+	
+	@Override
+	public List<PlayerResponseDto> findAllPlayerDto() {
+	    return playerRepository.findAllPlayerDto();
 	}
 
 }

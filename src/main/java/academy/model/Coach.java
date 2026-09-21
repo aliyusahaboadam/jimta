@@ -30,10 +30,16 @@ public class Coach {
 	private String licenseNo;
 	private String specialization;
 
-	@OneToOne(mappedBy = "coach", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "coach",
+	          fetch = FetchType.EAGER,
+	          cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+	          orphanRemoval = true)
 	private User user;
 
-	@OneToOne(mappedBy = "coach", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "coach",
+	          fetch = FetchType.EAGER,
+	          cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+	          orphanRemoval = true)
 	private Profile profile;
 
 	@OneToMany(mappedBy = "coach", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)

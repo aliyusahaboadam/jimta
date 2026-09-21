@@ -40,5 +40,15 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 			+ "WHERE m.status = :status "
 			+ "ORDER BY m.matchDate ASC")
 	List<MatchResponseDto> findAllMatchDtoByStatus(@Param("status") String status);
+	
+	
+	@Query("SELECT new academy.dto.response.MatchResponseDto("
+	        + "m.id, m.matchDate, m.venue, m.status, "
+	        + "ht.name, at.name, m.homeScore, m.awayScore) "
+	        + "FROM Match m "
+	        + "JOIN m.homeTeam ht "
+	        + "JOIN m.awayTeam at "
+	        + "ORDER BY m.matchDate DESC")
+	List<MatchResponseDto> findAllMatchDto();
 
 }

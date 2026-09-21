@@ -47,14 +47,23 @@ public class Player {
     @JoinColumn(name = "team_id")
     private Team team;
 
-    @OneToMany(mappedBy = "player", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    private Set<PlayerMatchPerformance> performances = new HashSet<>();
+    @OneToOne(mappedBy = "player",
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
+  private User user;
 
-    @OneToOne(mappedBy = "player", fetch = FetchType.EAGER)
-    private User user;
+  @OneToOne(mappedBy = "player",
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
+  private Profile profile;
 
-    @OneToOne(mappedBy = "player", fetch = FetchType.EAGER)
-    private Profile profile;
+  @OneToMany(mappedBy = "player",
+             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+             orphanRemoval = true,
+             fetch = FetchType.LAZY)
+  private Set<PlayerMatchPerformance> performances = new HashSet<>();
 
     // ============================================================
     // PERFORMANCE REMOVAL PROCESS
@@ -82,7 +91,7 @@ public class Player {
     // TEAM REMOVAL PROCESS
     // ============================================================
 
-    void setTeamInternal(Team team) {
+    public void setTeamInternal(Team team) {
         this.team = team;
     }
 

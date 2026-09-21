@@ -31,7 +31,11 @@ public class AdminServiceImpl implements AdminService {
 
 	    User user = new User.Builder()
 	            .setUsername(dto.getEmail())   // Admin uses email as username
-	            .setPassword(passwordEncoder.encode(dto.getEmail()))
+	            .setPassword(passwordEncoder.encode(
+	            	    dto.getPassword() != null && !dto.getPassword().isBlank()
+	            	        ? dto.getPassword()
+	            	        : dto.getEmail()
+	            	))
 	            .setEmail(dto.getEmail())
 	            .setRole("ADMIN")
 	            .build();
@@ -98,8 +102,14 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteAdmin(Long id) {
-		adminRepository.deleteById(id);
+	    Admin admin = adminRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+	    admin.removeAllForgotPasswordTokens();
+
+	    adminRepository.delete(admin);  // cascades to user/profile
 	}
 	
 	@Override
