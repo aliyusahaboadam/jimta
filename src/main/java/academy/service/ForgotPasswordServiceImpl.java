@@ -230,7 +230,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 	            + "\r\n"
 	            + "    <div class=\"header\">\r\n"
 	            + "      <div class=\"icon\">\r\n"
-	            + "        <img src=\"https://raw.githubusercontent.com/aliyusahaboadam/email-assets/main/logo.jpg\"\r\n"
+	            + "        <img src=\"https://raw.githubusercontent.com/aliyusahaboadam/email-assets/main/jimta_home_logo.jpg\"\r\n"
 	            + "             alt=\"Jimta Football Academy Logo\"\r\n"
 	            + "             class=\"company-logo\">\r\n"
 	            + "      </div>\r\n"
