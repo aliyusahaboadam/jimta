@@ -47,8 +47,6 @@ public class SecurityConfig {
 	private CustomUserDetailsService customUserDetailsService;
 
 
-
-
 	public SecurityConfig(HandlerExceptionResolver handlerExceptionResolver, JwtUtil jwtUtil,
 			CustomUserDetailsService customUserDetailsService) {
 		super();
@@ -57,45 +55,44 @@ public class SecurityConfig {
 		this.customUserDetailsService = customUserDetailsService;
 	}
 
-	 @Bean
-	 public static PasswordEncoder passwordEncoder() {
-	        return new BCryptPasswordEncoder();
-	 }
+	@Bean
+	public static PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-	 @Bean
-	 public CorsConfigurationSource corsConfigurationSource() {
-	     CorsConfiguration configuration = new CorsConfiguration();
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
 
-	     // Use setAllowedOriginPatterns instead of addAllowedOrigin (supports wildcards)
-	     // FIXED: this list was still the miqwii project's origins. The academy
-	     // frontend uses import.meta.env (Vite), whose dev server defaults to
-	     // port 5173, not 3000 - that mismatch is what was causing the CORS
-	     // block. Added the Vite dev port and the Jimta production domain
-	     // (ForgotPasswordController already builds email links to
-	     // jimtafootballacademy.com, so the frontend must be served from there).
-	     configuration.setAllowedOriginPatterns(Arrays.asList(
-	         "http://localhost:3000",
-	         "http://localhost:5173",
-	         "https://jimtafootballacademy.com",
-	         "https://www.jimtafootballacademy.com",
-	         "https://*.jimtafootballacademy.com"   // covers all subdomains
-	     ));
+		// Use setAllowedOriginPatterns instead of addAllowedOrigin (supports wildcards)
+		// FIXED: this list was still the miqwii project's origins. The academy
+		// frontend uses import.meta.env (Vite), whose dev server defaults to
+		// port 5173, not 3000 - that mismatch is what was causing the CORS
+		// block. Added the Vite dev port and the Jimta production domain
+		// (ForgotPasswordController already builds email links to
+		// jimtafootballacademy.com, so the frontend must be served from there).
+		configuration.setAllowedOriginPatterns(Arrays.asList(
+			"http://localhost:3000",
+			"http://localhost:5173",
+			"https://jimtafootballacademy.com",
+			"https://www.jimtafootballacademy.com",
+			"https://*.jimtafootballacademy.com"   // covers all subdomains
+		));
 
-	     configuration.addAllowedMethod("*");
-	     configuration.addAllowedHeader("*");
-	     configuration.setAllowCredentials(true);
-	     configuration.addExposedHeader("Authorization");
+		configuration.addAllowedMethod("*");
+		configuration.addAllowedHeader("*");
+		configuration.setAllowCredentials(true);
+		configuration.addExposedHeader("Authorization");
 
-	     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	     source.registerCorsConfiguration("/**", configuration);
-	     return source;
-	 }
-
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-         //
+		//
 		http.cors(c -> c.configurationSource(corsConfigurationSource())).csrf(c -> c.disable())
 
 
@@ -103,96 +100,105 @@ public class SecurityConfig {
 
 
 				// PERMIT ALL FIRST - must be at the top
-				    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				    .requestMatchers(
-				        "/health",
-				        "/actuator/**",
-				        "/v1/api/login",
-				        "/v1/api/admin/add",
-				        "/v1/api/admin/exists-by-email/**"
-				    ).permitAll()
+					.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+					.requestMatchers(
+						"/health",
+						"/actuator/**",
+						"/v1/api/login",
+						// /v1/api/admin/add used to be here - REMOVED.
+						// It creates an admin account; letting it be public is a
+						// security hole. It now falls through to .anyRequest().authenticated()
+						"/v1/api/admin/exists-by-email/**",
+						// Only the two genuinely public password endpoints.
+						// The self-service endpoints (save-reset-password-admin,
+						// -player, -coach) require a logged-in user and MUST NOT
+						// be listed here.
+						"/v1/api/password/save-password-request/**",
+						"/v1/api/password/save-reset-password"
+					).permitAll()
 
 
 				 // ADMIN ONLY - full administrative access (roster management,
 				 // creating coaches/players/teams/matches, recording performances,
 				 // and raw user lookups since UserController exposes User directly)
-	                .requestMatchers(
-	                    "/v1/api/admin/get-all",
-	                    "/v1/api/admin/get-by-id/**",
-	                    "/v1/api/admin/get-authenticated-admin",
-	                    "/v1/api/admin/welcome",
-	                    "/v1/api/admin/delete/**",
-	                    "/v1/api/coach/add",
-	                    "/v1/api/coach/delete/**",
-	                    "/v1/api/coach/get-all",
-	                    "/v1/api/player/add",
-	                    "/v1/api/player/update/**",
-	                    "/v1/api/player/delete/**",
-	                    "/v1/api/player/get-all",
-	                    "/v1/api/team/add",
-	                    "/v1/api/match/add",
-	                    "/v1/api/performance/add",
-	                    "/v1/api/user/get-by-id/**",
-	                    "/v1/api/user/get-by-username/**",
-	                    "/v1/api/user/get-by-role/**"
-	                ).hasAuthority("ADMIN")
+				.requestMatchers(
+					"/v1/api/admin/add",                    // <- moved here; admin-only now
+					"/v1/api/admin/get-all",
+					"/v1/api/admin/get-by-id/**",
+					"/v1/api/admin/get-authenticated-admin",
+					"/v1/api/admin/welcome",
+					"/v1/api/admin/delete/**",
+					"/v1/api/coach/add",
+					"/v1/api/coach/delete/**",
+					"/v1/api/coach/get-all",
+					"/v1/api/player/add",
+					"/v1/api/player/update/**",
+					"/v1/api/player/delete/**",
+					"/v1/api/player/get-all",
+					"/v1/api/team/add",
+					"/v1/api/match/add",
+					"/v1/api/performance/add",
+					"/v1/api/user/get-by-id/**",
+					"/v1/api/user/get-by-username/**",
+					"/v1/api/user/get-by-role/**"
+				).hasAuthority("ADMIN")
 
-	                // ADMIN + COACH - coach-facing lookups an admin also needs
-	                .requestMatchers(
-	                    "/v1/api/coach/get-by-id/**",
-	                    "/v1/api/coach/get-by-license/**",
-	                    "/v1/api/coach/get-by-team/**"
-	                ).hasAnyAuthority("ADMIN", "COACH")
+				// ADMIN + COACH - coach-facing lookups an admin also needs
+				.requestMatchers(
+					"/v1/api/coach/get-by-id/**",
+					"/v1/api/coach/get-by-license/**",
+					"/v1/api/coach/get-by-team/**"
+				).hasAnyAuthority("ADMIN", "COACH")
 
-	                // COACH ONLY - a coach's own identity
-	                .requestMatchers(
-	                    "/v1/api/coach/welcome",
-	                    "/v1/api/coach/get-authenticated-coach"
-	                ).hasAuthority("COACH")
+				// COACH ONLY - a coach's own identity
+				.requestMatchers(
+					"/v1/api/coach/welcome",
+					"/v1/api/coach/get-authenticated-coach"
+				).hasAuthority("COACH")
 
-	                // PLAYER ONLY - a player's own identity
-	                .requestMatchers(
-	                    "/v1/api/player/welcome",
-	                    "/v1/api/player/get-authenticated-player"
-	                ).hasAuthority("PLAYER")
+				// PLAYER ONLY - a player's own identity
+				.requestMatchers(
+					"/v1/api/player/welcome",
+					"/v1/api/player/get-authenticated-player"
+				).hasAuthority("PLAYER")
 
-	                // SHARED READ ACCESS - roster, fixtures, stats and profiles
-	                // any logged-in admin/coach/player can view
-	                .requestMatchers(
-	                    "/v1/api/team/get-by-id/**",
-	                    "/v1/api/team/get-all",
-	                    "/v1/api/team/get-all-with-player-count",
-	                    "/v1/api/team/get-by-coach/**",
-	                    "/v1/api/team/get-by-age-group/**",
-	                    "/v1/api/match/get-by-id/**",
-	                    "/v1/api/match/get-all",
-	                    "/v1/api/match/get-by-status/**",
-	                    "/v1/api/match/get-by-team/**",
-	                    "/v1/api/player/get-by-id/**",
-	                    "/v1/api/player/get-profile/**",
-	                    "/v1/api/player/get-by-team/**",
-	                    "/v1/api/player/get-by-jersey",
-	                    "/v1/api/performance/get-by-match/**",
-	                    "/v1/api/performance/get-by-player/**",
-	                    "/v1/api/performance/get-by-player-and-match",
-	                    "/v1/api/performance/get-season-totals/**",
-	                    "/v1/api/profile/get-by-player/**",
-	                    "/v1/api/profile/get-by-coach/**",
-	                    "/v1/api/profile/get-by-admin/**",
-	                    "/v1/api/user/get-authenticated-user"
-	                ).hasAnyAuthority("ADMIN", "COACH", "PLAYER")
+				// SHARED READ ACCESS - roster, fixtures, stats and profiles
+				// any logged-in admin/coach/player can view
+				.requestMatchers(
+					"/v1/api/team/get-by-id/**",
+					"/v1/api/team/get-all",
+					"/v1/api/team/get-all-with-player-count",
+					"/v1/api/team/get-by-coach/**",
+					"/v1/api/team/get-by-age-group/**",
+					"/v1/api/match/get-by-id/**",
+					"/v1/api/match/get-all",
+					"/v1/api/match/get-by-status/**",
+					"/v1/api/match/get-by-team/**",
+					"/v1/api/player/get-by-id/**",
+					"/v1/api/player/get-profile/**",
+					"/v1/api/player/get-by-team/**",
+					"/v1/api/player/get-by-jersey",
+					"/v1/api/performance/get-by-match/**",
+					"/v1/api/performance/get-by-player/**",
+					"/v1/api/performance/get-by-player-and-match",
+					"/v1/api/performance/get-season-totals/**",
+					"/v1/api/profile/get-by-player/**",
+					"/v1/api/profile/get-by-coach/**",
+					"/v1/api/profile/get-by-admin/**",
+					"/v1/api/user/get-authenticated-user"
+				).hasAnyAuthority("ADMIN", "COACH", "PLAYER")
 
 
-	                // Deny all other requests
-	                .anyRequest().authenticated()
+				// Deny all other requests
+				.anyRequest().authenticated()
 
 				).exceptionHandling(ex -> ex
 						.authenticationEntryPoint(customAuthenticationEntryPoint)
-		                .accessDeniedHandler(customAccessDeniedHandler))
+						.accessDeniedHandler(customAccessDeniedHandler))
 		 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		       http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class );
-		       	return http.build();
+			   http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class );
+				return http.build();
 	}
 
 	@Autowired
@@ -208,7 +214,7 @@ public class SecurityConfig {
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-	    return new JwtAuthenticationFilter(handlerExceptionResolver, jwtUtil, customUserDetailsService);
+		return new JwtAuthenticationFilter(handlerExceptionResolver, jwtUtil, customUserDetailsService);
 	}
 
 

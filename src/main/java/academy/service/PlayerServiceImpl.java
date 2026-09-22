@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import academy.dto.request.PlayerRequestDto;
 import academy.dto.response.PlayerResponseDto;
+import academy.exception.AcademyException;
 import academy.interfaces.PlayerService;
 import academy.model.Player;
 import academy.model.Profile;
@@ -40,6 +42,13 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     @Transactional
     public Player savePlayer(PlayerRequestDto dto) {
+    	
+    	if (userRepository.existsByEmail(dto.getEmail())) {
+	        throw new AcademyException(
+	            "A user with this email already exists",
+	            HttpStatus.CONFLICT
+	        );
+	    }
 
         // 1. Resolve team (optional)
         Team team = null;

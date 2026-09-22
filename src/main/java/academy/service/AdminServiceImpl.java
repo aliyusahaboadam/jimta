@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import academy.dto.request.AdminRequestDto;
 import academy.dto.response.AdminResponseDto;
+import academy.exception.AcademyException;
 import academy.interfaces.AdminService;
 import academy.model.Admin;
 import academy.model.Profile;
 import academy.model.User;
 import academy.repository.AdminRepository;
+import academy.repository.UserRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -25,9 +28,19 @@ public class AdminServiceImpl implements AdminService {
 	@Autowired
     private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Override
 	@Transactional
 	public Admin saveAdmin(AdminRequestDto dto) {
+		
+		if (userRepository.existsByEmail(dto.getEmail())) {
+	        throw new AcademyException(
+	            "A user with this email already exists",
+	            HttpStatus.CONFLICT
+	        );
+	    }
 
 	    User user = new User.Builder()
 	            .setUsername(dto.getEmail())   // Admin uses email as username

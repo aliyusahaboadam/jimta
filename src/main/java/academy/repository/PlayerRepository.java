@@ -25,10 +25,14 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 	        + "p.position, p.jerseyNumber, "
 	        + "p.nationality, p.preferredFoot, p.heightCm, p.weightKg, "
 	        + "p.playerNumber, p.previousClub, "
-	        + "t.id, t.name) "
+	        + "p.photoUrl, "
+	        + "t.id, t.name, t.ageGroup, t.division, "
+	        + "CONCAT(cpr.firstname, ' ', cpr.surname)) "
 	        + "FROM Player p "
 	        + "LEFT JOIN Profile pr ON pr.player.id = p.id "
 	        + "LEFT JOIN Team t ON t.id = p.team.id "
+	        + "LEFT JOIN Coach c ON c.id = t.coach.id "
+	        + "LEFT JOIN Profile cpr ON cpr.coach.id = c.id "
 	        + "WHERE p.id = :id")
 	Optional<PlayerResponseDto> findPlayerDtoById(@Param("id") Long id);
 

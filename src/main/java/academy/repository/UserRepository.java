@@ -17,6 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	  User findByEmail(String email);
 	  
 	  User findByRole(String role);
+	  
+	  boolean existsByEmail(String email);
+	  boolean existsByUsername(String username);
 
 
 	@Query("SELECT new academy.dto.response.UserResponseDto(u.id, u.username, u.email, u.role) "

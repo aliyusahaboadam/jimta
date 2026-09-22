@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import academy.dto.request.CoachRequestDto;
 import academy.dto.response.CoachResponseDto;
+import academy.exception.AcademyException;
 import academy.interfaces.CoachService;
 import academy.model.Coach;
 import academy.model.Profile;
@@ -35,6 +37,13 @@ public class CoachServiceImpl implements CoachService {
 	@Override
 	@Transactional
 	public Coach saveCoach(CoachRequestDto dto) {
+		
+		if (userRepository.existsByEmail(dto.getEmail())) {
+	        throw new AcademyException(
+	            "A user with this email already exists",
+	            HttpStatus.CONFLICT
+	        );
+	    }
 
 	    // 1. Generate unique username
 	    String username;

@@ -27,6 +27,10 @@ public class PlayerResponseDto {
     private Long userId;
     private Set<Long> performanceIds = new HashSet<>();
     
+    private String teamAgeGroup;
+    private String teamDivision;
+    private String coachName;
+    
     
  
     private String teamName;
@@ -98,6 +102,35 @@ this.previousClub = previousClub;
 this.photoUrl = photoUrl;
 this.teamId = teamId;
 this.teamName = teamName;
+}
+    
+    public PlayerResponseDto(long id, String firstname, String surname, String lastname,
+            String position, Integer jerseyNumber,
+            String nationality, String preferredFoot,
+            Double heightCm, Double weightKg,
+            Integer playerNumber, String previousClub,
+            String photoUrl,
+            Long teamId, String teamName,
+            String teamAgeGroup, String teamDivision,
+            String coachName) {
+this.id = id;
+this.firstname = firstname;
+this.surname = surname;
+this.lastname = lastname;
+this.position = position;
+this.jerseyNumber = jerseyNumber;
+this.nationality = nationality;
+this.preferredFoot = preferredFoot;
+this.heightCm = heightCm;
+this.weightKg = weightKg;
+this.playerNumber = playerNumber;
+this.previousClub = previousClub;
+this.photoUrl = photoUrl;
+this.teamId = teamId;
+this.teamName = teamName;
+this.teamAgeGroup = teamAgeGroup;
+this.teamDivision = teamDivision;
+this.coachName = coachName;
 }
     
     public PlayerResponseDto(long id, String firstname, String surname, String lastname,
@@ -230,6 +263,32 @@ this.weightKg = weightKg;
 	public void setTeamName(String teamName) {
 		this.teamName = teamName;
 	}
+
+	public String getTeamAgeGroup() {
+		return teamAgeGroup;
+	}
+
+	public void setTeamAgeGroup(String teamAgeGroup) {
+		this.teamAgeGroup = teamAgeGroup;
+	}
+
+	public String getTeamDivision() {
+		return teamDivision;
+	}
+
+	public void setTeamDivision(String teamDivision) {
+		this.teamDivision = teamDivision;
+	}
+
+	public String getCoachName() {
+		return coachName;
+	}
+
+	public void setCoachName(String coachName) {
+		this.coachName = coachName;
+	}
+	
+	
 	
 	
     
